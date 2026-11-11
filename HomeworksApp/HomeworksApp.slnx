@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="HomeworksApp.Android/HomeworksApp.Android.csproj">
+    <Deploy />
+  </Project>
+  <Project Path="HomeworksApp.Desktop/HomeworksApp.Desktop.csproj" />
+  <Project Path="HomeworksApp/HomeworksApp.csproj" />
+</Solution>
