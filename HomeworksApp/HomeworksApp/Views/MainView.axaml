@@ -5,31 +5,20 @@
              Background="#747B80">
 
     <UserControl.Styles>
+
         <Style Selector="TabControl /template/ TabStrip">
             <Setter Property="IsVisible" Value="False"/>
         </Style>
-        
+
         <Style Selector="TabItem:selected /template/ Border#PART_SelectedPipe">
             <Setter Property="Background" Value="#171717"/>
         </Style>
-        
-        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-            <Setter Property="Background" Value="Transparent"/>
-        </Style>
 
-        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="Transparent"/>
-        </Style>
-
-        <Style Selector="ListBoxItem:selected /template/ ContentPresenter TextBlock">
-            <Setter Property="Foreground" Value="#171717"/>
-        </Style>
-        
         <Style Selector="TabItem">
             <Setter Property="Foreground" Value="#171717"/>
             <Setter Property="FontWeight" Value="Bold"/>
         </Style>
-        
+
         <Style Selector="TextBlock">
             <Setter Property="Foreground" Value="#171717"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -40,6 +29,8 @@
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Background" Value="#E2E2E2"/>
             <Setter Property="Padding" Value="14,9"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
 
         <Style Selector="ListBox">
@@ -47,43 +38,63 @@
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Foreground" Value="#171717"/>
         </Style>
+
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+        <Style Selector="ComboBox">
+            <Setter Property="Background" Value="#747B80"/>
+            <Setter Property="Foreground" Value="#E2E2E2"/>
+            <Setter Property="BorderBrush" Value="#4A5055"/>
+        </Style>
+
+        <Style Selector="ComboBoxItem">
+            <Setter Property="Background" Value="#747B80"/>
+            <Setter Property="Foreground" Value="#E2E2E2"/>
+        </Style>
+
     </UserControl.Styles>
 
     <Grid>
-        <TabControl x:Name="MainTabs"
-                    TabStripPlacement="Top">
+        <TabControl x:Name="MainTabs">
 
-            <TabControl.Styles>
-                <Style Selector="TabControl /template/ TabStrip">
-                    <Setter Property="IsVisible" Value="False"/>
-                </Style>
-            </TabControl.Styles>
+            <!-- ИГРОКИ -->
 
             <TabItem Header="игроки">
                 <Grid Margin="25"
-                      RowDefinitions="Auto,Auto,*">
+                      RowDefinitions="Auto,Auto,Auto,*,Auto,Auto">
 
-                    <TextBlock Grid.Row="1"
+                    <Button Grid.Row="1"
+                            Content="добавить"
+                            HorizontalAlignment="Center"
+                            Margin="0,20,0,40"
+                            Click="OnAddPlayerClick"/>
+
+                    <TextBlock Grid.Row="2"
                                Text="игроки клуба"
                                FontSize="25"
                                HorizontalAlignment="Center"
-                               Margin="0,20,0,20"/>
+                               Margin="0,0,0,20"/>
 
-                    <ListBox Grid.Row="2"
+                    <ListBox Grid.Row="3"
                              x:Name="PlayersList"
                              Width="280"
-                             HorizontalAlignment="Center">
+                             HorizontalAlignment="Center"
+                             SelectionChanged="OnPlayerSelected">
 
                         <ListBox.DataTemplates>
-                            <DataTemplate DataType="model:Player"
-                                          x:DataType="model:Player">
+                            <DataTemplate x:DataType="model:Player">
                                 <StackPanel Margin="8"
                                             Spacing="5"
                                             HorizontalAlignment="Center">
                                     <TextBlock Text="{Binding Nickname}"
                                                FontSize="16"
                                                HorizontalAlignment="Center"/>
-
                                     <TextBlock Text="{Binding FullName}"
                                                FontSize="16"
                                                HorizontalAlignment="Center"/>
@@ -91,82 +102,374 @@
                             </DataTemplate>
                         </ListBox.DataTemplates>
                     </ListBox>
+
+                    <StackPanel Grid.Row="4"
+                                x:Name="PlayerActionsPanel"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                Spacing="10"
+                                Margin="0,15,0,0"
+                                IsVisible="False">
+
+                        <Button Content="изменить"
+                                Width="120"
+                                Click="OnEditPlayerClick"/>
+
+                        <Button Content="удалить"
+                                Width="120"
+                                Background="#E57373"
+                                Click="OnDeletePlayerClick"/>
+                    </StackPanel>
+
+                    <Border Grid.Row="5"
+                            x:Name="PlayerEditPanel"
+                            IsVisible="False"
+                            Background="#E2E2E2"
+                            CornerRadius="8"
+                            Padding="15"
+                            Width="300"
+                            HorizontalAlignment="Center"
+                            Margin="0,15,0,0">
+
+                        <StackPanel Spacing="7">
+
+                            <TextBlock x:Name="PlayerEditTitle"
+                                       Text="редактировать игрока"
+                                       FontSize="18"
+                                       HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="никнейм"/>
+                            <TextBox x:Name="EditNicknameBox"
+                                     Width="260"
+                                     HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="ФИО"/>
+                            <TextBox x:Name="EditFullNameBox"
+                                     Width="260"
+                                     HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="номер телефона"/>
+                            <TextBox x:Name="EditPhoneBox"
+                                     Width="260"
+                                     HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="дата рождения"/>
+                            <DatePicker x:Name="EditPlayerBirthDatePicker"
+                                        Width="260"
+                                        HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="дата регистрации"/>
+                            <DatePicker x:Name="EditPlayerRegistrationDatePicker"
+                                        Width="260"
+                                        HorizontalAlignment="Center"/>
+
+                            <CheckBox x:Name="EditPlayerIsVipCheckBox"
+                                      Content="VIP"/>
+
+                            <TextBlock x:Name="PlayerEditError"
+                                       Foreground="#B71C1C"
+                                       FontSize="13"
+                                       TextWrapping="Wrap"
+                                       IsVisible="False"/>
+
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
+                                        Spacing="8"
+                                        Margin="0,8,0,0">
+
+                                <Button Content="сохранить"
+                                        Click="OnSavePlayerClick"/>
+
+                                <Button Content="отмена"
+                                        Click="OnCancelEditClick"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
                 </Grid>
             </TabItem>
 
+            <!-- ТУРНИРЫ -->
+
             <TabItem Header="турниры">
                 <Grid Margin="25"
-                      RowDefinitions="Auto,Auto,*">
+                      RowDefinitions="Auto,Auto,Auto,*,Auto,Auto">
 
-                    <TextBlock Grid.Row="1"
+                    <Button Grid.Row="1"
+                            Content="добавить"
+                            HorizontalAlignment="Center"
+                            Margin="0,20,0,40"
+                            Click="OnAddTournamentClick"/>
+
+                    <TextBlock Grid.Row="2"
                                Text="турниры клуба"
                                FontSize="25"
                                HorizontalAlignment="Center"
-                               Margin="0,20,0,20"/>
+                               Margin="0,0,0,20"/>
 
-                    <ListBox Grid.Row="2"
+                    <ListBox Grid.Row="3"
                              x:Name="TournamentsList"
                              Width="280"
-                             HorizontalAlignment="Center">
+                             HorizontalAlignment="Center"
+                             SelectionChanged="OnTournamentSelected">
 
                         <ListBox.DataTemplates>
-                            <DataTemplate DataType="model:Tournament"
-                                          x:DataType="model:Tournament">
+                            <DataTemplate x:DataType="model:Tournament">
                                 <StackPanel Margin="8"
                                             Spacing="5"
                                             HorizontalAlignment="Center">
                                     <TextBlock Text="{Binding Name}"
                                                FontSize="16"
                                                HorizontalAlignment="Center"/>
-
                                     <TextBlock Text="{Binding StartDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}"
                                                FontSize="14"
-                                               Opacity="0.65"
                                                HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.DataTemplates>
                     </ListBox>
+
+                    <StackPanel Grid.Row="4"
+                                x:Name="TournamentActionsPanel"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                Spacing="10"
+                                Margin="0,15,0,0"
+                                IsVisible="False">
+
+                        <Button Content="изменить"
+                                Width="120"
+                                Click="OnEditTournamentClick"/>
+
+                        <Button Content="удалить"
+                                Width="120"
+                                Background="#E57373"
+                                Click="OnDeleteTournamentClick"/>
+                    </StackPanel>
+
+                    <Border Grid.Row="5"
+                            x:Name="TournamentEditPanel"
+                            IsVisible="False"
+                            Background="#E2E2E2"
+                            CornerRadius="8"
+                            Padding="15"
+                            Width="300"
+                            HorizontalAlignment="Center"
+                            Margin="0,15,0,0">
+
+                        <StackPanel Spacing="7">
+
+                            <TextBlock x:Name="TournamentEditTitle"
+                                       Text="редактировать турнир"
+                                       FontSize="18"
+                                       HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="название"/>
+                            <TextBox x:Name="EditTournamentNameBox"
+                                     Width="260"
+                                     HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="дата начала"/>
+                            <DatePicker x:Name="EditTournamentDatePicker"
+                                        Width="260"
+                                        HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="время начала"/>
+                            <TimePicker x:Name="EditTournamentTimePicker"
+                                        Width="260"
+                                        HorizontalAlignment="Center"
+                                        ClockIdentifier="24HourClock"/>
+
+                            <TextBlock Text="дата окончания (необязательно)"/>
+                            <DatePicker x:Name="EditTournamentEndDatePicker"
+                                        Width="260"
+                                        HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="максимум игроков"/>
+                            <TextBox x:Name="EditTournamentMaxPlayersBox"
+                                     Width="260"
+                                     HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="бай-ин (руб.)"/>
+                            <TextBox x:Name="EditTournamentBuyInBox"
+                                     Width="260"
+                                     HorizontalAlignment="Center"/>
+
+                            <CheckBox x:Name="EditTournamentIsPrivateCheckBox"
+                                      Content="закрытый турнир"/>
+
+                            <TextBlock Text="победитель"/>
+                            <ComboBox x:Name="EditTournamentWinnerBox"
+                                      Width="260"
+                                      HorizontalAlignment="Center">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate x:DataType="model:Player">
+                                        <TextBlock Text="{Binding Nickname}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <TextBlock x:Name="TournamentEditError"
+                                       Foreground="#B71C1C"
+                                       FontSize="13"
+                                       TextWrapping="Wrap"
+                                       IsVisible="False"/>
+
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
+                                        Spacing="8"
+                                        Margin="0,8,0,0">
+
+                                <Button Content="сохранить"
+                                        Click="OnSaveTournamentClick"/>
+
+                                <Button Content="отмена"
+                                        Click="OnCancelTournamentEditClick"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
                 </Grid>
             </TabItem>
 
+            <!-- РЕГИСТРАЦИИ -->
+
             <TabItem Header="регистрации">
                 <Grid Margin="25"
-                      RowDefinitions="Auto,Auto,*">
+                      RowDefinitions="Auto,Auto,Auto,*,Auto,Auto">
 
-                    <TextBlock Grid.Row="1"
+                    <Button Grid.Row="1"
+                            Content="добавить"
+                            HorizontalAlignment="Center"
+                            Margin="0,20,0,40"
+                            Click="OnAddRegistrationClick"/>
+
+                    <TextBlock Grid.Row="2"
                                Text="регистрации"
                                FontSize="25"
                                HorizontalAlignment="Center"
-                               Margin="0,20,0,20"/>
+                               Margin="0,0,0,20"/>
 
-                    <ListBox Grid.Row="2"
+                    <ListBox Grid.Row="3"
                              x:Name="RegistrationsList"
                              Width="280"
-                             HorizontalAlignment="Center">
+                             HorizontalAlignment="Center"
+                             SelectionChanged="OnRegistrationSelected">
 
                         <ListBox.DataTemplates>
-                            <DataTemplate DataType="model:Registration"
-                                          x:DataType="model:Registration">
+                            <DataTemplate x:DataType="model:Registration">
                                 <StackPanel Margin="8"
                                             Spacing="5"
                                             HorizontalAlignment="Center">
                                     <TextBlock Text="{Binding Player.Nickname}"
                                                FontSize="16"
                                                HorizontalAlignment="Center"/>
-
                                     <TextBlock Text="{Binding Tournament.Name}"
                                                FontSize="16"
                                                HorizontalAlignment="Center"/>
-
                                     <TextBlock Text="{Binding RegistrationDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}"
                                                FontSize="13"
-                                               Opacity="0.65"
                                                HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.DataTemplates>
                     </ListBox>
+
+                    <StackPanel Grid.Row="4"
+                                x:Name="RegistrationActionsPanel"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                Spacing="10"
+                                Margin="0,15,0,0"
+                                IsVisible="False">
+
+                        <Button Content="изменить"
+                                Width="120"
+                                Click="OnEditRegistrationClick"/>
+
+                        <Button Content="удалить"
+                                Width="120"
+                                Background="#E57373"
+                                Click="OnDeleteRegistrationClick"/>
+                    </StackPanel>
+
+                    <Border Grid.Row="5"
+                            x:Name="RegistrationEditPanel"
+                            IsVisible="False"
+                            Background="#E2E2E2"
+                            CornerRadius="8"
+                            Padding="15"
+                            Width="300"
+                            HorizontalAlignment="Center"
+                            Margin="0,15,0,0">
+
+                        <StackPanel Spacing="7">
+
+                            <TextBlock x:Name="RegistrationEditTitle"
+                                       Text="редактировать регистрацию"
+                                       FontSize="18"
+                                       HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="игрок"/>
+                            <ComboBox x:Name="EditRegistrationPlayerBox"
+                                      Width="260"
+                                      HorizontalAlignment="Center">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate x:DataType="model:Player">
+                                        <TextBlock Text="{Binding Nickname}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <TextBlock Text="турнир"/>
+                            <ComboBox x:Name="EditRegistrationTournamentBox"
+                                      Width="260"
+                                      HorizontalAlignment="Center">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate x:DataType="model:Tournament">
+                                        <TextBlock Text="{Binding Name}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <TextBlock Text="дата регистрации"/>
+                            <DatePicker x:Name="EditRegistrationDatePicker"
+                                        Width="260"
+                                        HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="время регистрации"/>
+                            <TimePicker x:Name="EditRegistrationTimePicker"
+                                        Width="260"
+                                        HorizontalAlignment="Center"
+                                        ClockIdentifier="24HourClock"/>
+
+                            <TextBlock Text="итоговое место (необязательно)"/>
+                            <TextBox x:Name="EditRegistrationFinalPlaceBox"
+                                     Width="260"
+                                     HorizontalAlignment="Center"/>
+
+                            <TextBlock Text="выигрыш в рублях (необязательно)"/>
+                            <TextBox x:Name="EditRegistrationPrizeMoneyBox"
+                                     Width="260"
+                                     HorizontalAlignment="Center"/>
+
+                            <TextBlock x:Name="RegistrationEditError"
+                                       Foreground="#B71C1C"
+                                       FontSize="13"
+                                       TextWrapping="Wrap"
+                                       IsVisible="False"/>
+
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
+                                        Spacing="8"
+                                        Margin="0,8,0,0">
+
+                                <Button Content="сохранить"
+                                        Click="OnSaveRegistrationClick"/>
+
+                                <Button Content="отмена"
+                                        Click="OnCancelRegistrationEditClick"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
                 </Grid>
             </TabItem>
         </TabControl>
