@@ -1,18 +1,174 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="using:HomeworksApp.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:model="using:MyApp.Data.Models"
              x:Class="HomeworksApp.Views.MainView"
-             x:DataType="vm:MainViewModel">
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainViewModel />
-    </Design.DataContext>
+             Background="#747B80">
 
-    <TextBox Text="{Binding Greeting}"
-             HorizontalAlignment="Center"
-             VerticalAlignment="Center" />
+    <UserControl.Styles>
+        <Style Selector="TabControl /template/ TabStrip">
+            <Setter Property="IsVisible" Value="False"/>
+        </Style>
+        
+        <Style Selector="TabItem:selected /template/ Border#PART_SelectedPipe">
+            <Setter Property="Background" Value="#171717"/>
+        </Style>
+        
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter TextBlock">
+            <Setter Property="Foreground" Value="#171717"/>
+        </Style>
+        
+        <Style Selector="TabItem">
+            <Setter Property="Foreground" Value="#171717"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        
+        <Style Selector="TextBlock">
+            <Setter Property="Foreground" Value="#171717"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <Style Selector="Button">
+            <Setter Property="Foreground" Value="#171717"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Background" Value="#E2E2E2"/>
+            <Setter Property="Padding" Value="14,9"/>
+        </Style>
+
+        <Style Selector="ListBox">
+            <Setter Property="Background" Value="#747B80"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#171717"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid>
+        <TabControl x:Name="MainTabs"
+                    TabStripPlacement="Top">
+
+            <TabControl.Styles>
+                <Style Selector="TabControl /template/ TabStrip">
+                    <Setter Property="IsVisible" Value="False"/>
+                </Style>
+            </TabControl.Styles>
+
+            <TabItem Header="игроки">
+                <Grid Margin="25"
+                      RowDefinitions="Auto,Auto,*">
+
+                    <TextBlock Grid.Row="1"
+                               Text="игроки клуба"
+                               FontSize="25"
+                               HorizontalAlignment="Center"
+                               Margin="0,20,0,20"/>
+
+                    <ListBox Grid.Row="2"
+                             x:Name="PlayersList"
+                             Width="280"
+                             HorizontalAlignment="Center">
+
+                        <ListBox.DataTemplates>
+                            <DataTemplate DataType="model:Player"
+                                          x:DataType="model:Player">
+                                <StackPanel Margin="8"
+                                            Spacing="5"
+                                            HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding Nickname}"
+                                               FontSize="16"
+                                               HorizontalAlignment="Center"/>
+
+                                    <TextBlock Text="{Binding FullName}"
+                                               FontSize="16"
+                                               HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.DataTemplates>
+                    </ListBox>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="турниры">
+                <Grid Margin="25"
+                      RowDefinitions="Auto,Auto,*">
+
+                    <TextBlock Grid.Row="1"
+                               Text="турниры клуба"
+                               FontSize="25"
+                               HorizontalAlignment="Center"
+                               Margin="0,20,0,20"/>
+
+                    <ListBox Grid.Row="2"
+                             x:Name="TournamentsList"
+                             Width="280"
+                             HorizontalAlignment="Center">
+
+                        <ListBox.DataTemplates>
+                            <DataTemplate DataType="model:Tournament"
+                                          x:DataType="model:Tournament">
+                                <StackPanel Margin="8"
+                                            Spacing="5"
+                                            HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding Name}"
+                                               FontSize="16"
+                                               HorizontalAlignment="Center"/>
+
+                                    <TextBlock Text="{Binding StartDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}"
+                                               FontSize="14"
+                                               Opacity="0.65"
+                                               HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.DataTemplates>
+                    </ListBox>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="регистрации">
+                <Grid Margin="25"
+                      RowDefinitions="Auto,Auto,*">
+
+                    <TextBlock Grid.Row="1"
+                               Text="регистрации"
+                               FontSize="25"
+                               HorizontalAlignment="Center"
+                               Margin="0,20,0,20"/>
+
+                    <ListBox Grid.Row="2"
+                             x:Name="RegistrationsList"
+                             Width="280"
+                             HorizontalAlignment="Center">
+
+                        <ListBox.DataTemplates>
+                            <DataTemplate DataType="model:Registration"
+                                          x:DataType="model:Registration">
+                                <StackPanel Margin="8"
+                                            Spacing="5"
+                                            HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding Player.Nickname}"
+                                               FontSize="16"
+                                               HorizontalAlignment="Center"/>
+
+                                    <TextBlock Text="{Binding Tournament.Name}"
+                                               FontSize="16"
+                                               HorizontalAlignment="Center"/>
+
+                                    <TextBlock Text="{Binding RegistrationDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}"
+                                               FontSize="13"
+                                               Opacity="0.65"
+                                               HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.DataTemplates>
+                    </ListBox>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
 </UserControl>
